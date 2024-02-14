@@ -1,0 +1,46 @@
+[bayesian_optimization]
+b = [[0.0, 0.05], [0.0, 15.0], [0.0, 20.0]]
+
+[bayesian_optimization.setup]
+eval_metric = "FSS"
+init_points = 1
+n_iter = 1
+random_state = "None"
+decimal_precision = 2
+verbose = 2
+
+[medslik2.sim_extent]
+SIM_NAME = "syria"
+sim_length = "0072"
+duration = "0072"
+spillrate = "00138.00"
+age = "0"
+grid_size = "150.0"
+oil_api = 28.0
+oil_volume = 2000.0
+number_slick = 1
+
+[medslik2.sim_date]
+day = "23"
+month = "08"
+year = "21"
+hour = "10"
+minutes = "00"
+
+[medslik2.sim_coords]
+lat_degree = 35
+lat_minutes = 10.356
+lon_degree = 35
+lon_minutes = 55.002
+delta = 1
+
+[medslik2.sim_params]
+k = [ "Wind correction (Drift Factor)", "Wind correction (Drift Angle at zero wind speed)", "Horizontal Diffusivity",]
+v = [ 0.78, 0.00, 2.0]
+kparticles = "No of parcels used to model diffusion and dispersion"
+vparticles = 1000
+
+[medslik2.data_format]
+type = "analysis"
+time_res = "day"
+process_files = "True"
