@@ -47,29 +47,29 @@ def main(args):
     random_state = None if bay_opt_setup_service_instance.get_random_state() == 'None' else int(bay_opt_setup_service_instance.get_random_state())
     verbose = bay_opt_setup_service_instance.get_verbose()
     
-    try:
-        """
-        Perform parameter and particle number checks
-        """
-        check_parameters_match(sim_params.keys(), parameters_bound.keys())
-            
-        check_particles_number(nparticles)
+    # try:
+    """
+    Perform parameter and particle number checks
+    """
+    check_parameters_match(sim_params.keys(), parameters_bound.keys())
         
-        """
-        Check the type of execution via the workflow controller
-        """
-        print("> Check Mode")
-        workflow_controller_instance.check_execution_type(args.mode)
+    check_particles_number(nparticles)
+    
+    """
+    Check the type of execution via the workflow controller
+    """
+    print("> Check Mode")
+    workflow_controller_instance.check_execution_type(args.mode)
 
-        """
-        Perform configuration and workflow execution
-        """
-        workflow_controller_instance.setup(args.mode)
-        workflow_controller_instance.run(args.mode, parameters_bound, random_state, verbose)
+    """
+    Perform configuration and workflow execution
+    """
+    workflow_controller_instance.setup(args.mode)
+    workflow_controller_instance.run(args.mode, parameters_bound, random_state, verbose)
     
     # TODO: da sostituire con eccezione personalizzata
-    except Exception as e:
-        print(f"Error during execution (Check main.py): {e}")
+    # except Exception as e:
+    #     print(f"Error during execution (Check main.py): {e}")
         
 if __name__ == "__main__":
     
