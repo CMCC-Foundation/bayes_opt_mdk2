@@ -16,7 +16,7 @@ class PathDTO:
 
         self.ROOT = os.environ.get('PYTHONPATH').split(":")[1]
         # self.ROOT = '/work/asc/machine_learning/projects/iMagine/bayes_opt_20240214'
-        self.MEDSLIK_FOLDER=os.path.join(self.ROOT, 'simulation/Medslik_II')
+        self.MEDSLIK_FOLDER= "/work/asc/machine_learning/projects/iMagine/Medslik-II"
         # self.MEDSLIK_RUN = "/work/asc/machine_learning/projects/iMagine/MEDSLIK_II_2.02/RUN"
         self.MEDSLIK_RUN=os.path.join(self.MEDSLIK_FOLDER, 'MEDSLIK_II_3.01/RUN')
         self.WORKFLOW_CONFIG = os.path.join(self.ROOT, 'simulation_setup_file/workflow_config.toml')

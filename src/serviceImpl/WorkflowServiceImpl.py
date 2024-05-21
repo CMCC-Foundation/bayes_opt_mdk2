@@ -24,7 +24,7 @@ from src.controller.ObjFunctionController import ObjFunctionController
 
 from src.exception.WrongConfigurationException import WrongConfigurationException
 
-from simulation.gen_mdk2_sim import Gen_Mdk2_Sim
+# from simulation.gen_mdk2_sim import Gen_Mdk2_Sim
 
 class ExecutionType(Enum):
     BAYESOPT = 0
@@ -46,7 +46,7 @@ class WorkflowServiceImpl:
         self.path_controller_instance = PathController()
         self.obj_function_controller_instance = ObjFunctionController()
         
-        self.gen_mdk2_sim_instance = Gen_Mdk2_Sim()
+        # self.gen_mdk2_sim_instance = Gen_Mdk2_Sim()
         
     def get_execution_type_name_impl(self, value):
         for et in ExecutionType:
@@ -107,7 +107,7 @@ class WorkflowServiceImpl:
                         
             # gather and process OCE and MET fields for setting-up the simulation
             print('> Gather and process OCE and MET fields for the oil spill ...')
-            self.gen_mdk2_sim_instance.gen_mdk2_sim()
+            # self.gen_mdk2_sim_instance.gen_mdk2_sim()
             
             """
             compile MEDSLIK-II
@@ -125,7 +125,7 @@ class WorkflowServiceImpl:
             
             # gather and process OCE and MET fields for setting-up the simulation
             print('> Gather and process OCE and MET fields for the oil spill ...')
-            self.gen_mdk2_sim_instance.gen_mdk2_sim()
+            # self.gen_mdk2_sim_instance.gen_mdk2_sim()
             
             params = self.mdk2_sim_params_service_instance.get_sim_params_kv_dict()
             particles_dict = self.mdk2_sim_params_service_instance.get_particles_key_value_dict()

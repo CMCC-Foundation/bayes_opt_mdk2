@@ -7,7 +7,8 @@
 
 import os
 import time
-
+import sys
+sys.path.append("/work/asc/machine_learning/projects/iMagine/bayes_opt_mdk2")
 from src.service.PathService import PathService
 from src.service.MDK2SimDateService import MDK2SimDateService
 from src.service.MDK2SimExtentService import MDK2SimExtentService

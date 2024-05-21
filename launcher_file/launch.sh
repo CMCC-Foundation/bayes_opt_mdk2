@@ -8,8 +8,10 @@
 #BSUB -R "rusage[mem=1G]"
 
 ROOT="/work/asc/machine_learning/projects/iMagine/bayes_opt_medslikII_workflow"
+MEDSLIK="/work/asc/machine_learning/projects/iMagine/Medslik-II"
 
 # !conda run -p /work/asc/machine_learning/projects/iMagine/bayes_opt_workflow/env/mdk2_env \
 export PYTHONPATH=$PYTHONPATH:$ROOT && \
+export MEDSLIKPATH=$MEDSLIKPATH:$MEDSLIK && \
 python $ROOT/src/main/main.py \
 --mode 0

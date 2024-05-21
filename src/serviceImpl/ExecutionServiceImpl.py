@@ -85,7 +85,8 @@ class ExecutionServiceImpl:
     """
     def run_model(self):
         try:
-            subprocess.run([f'cd {self.path_controller_instance.get_MEDSLIK_RUN()}; sh RUN.sh'],shell=True,check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            # subprocess.run([f'cd {self.path_controller_instance.get_MEDSLIK_RUN()}; sh RUN.sh'],shell=True,check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subprocess.run([f'cd {self.path_controller_instance.get_MEDSLIK_RUN()}; python /work/asc/machine_learning/projects/iMagine/Medslik-II/Medslik_run_usecase.py'], shell=True,check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             return "Execution successfully completed"
         except subprocess.CalledProcessError as e:
             print(f"Error while running MEDSLIK-II: {e}")

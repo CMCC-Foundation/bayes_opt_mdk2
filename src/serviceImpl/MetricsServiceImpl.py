@@ -18,6 +18,9 @@ from mpl_toolkits.basemap import Basemap
 import geopandas as gpd
 import glob
 
+import sys
+sys.path.append("/work/asc/machine_learning/projects/iMagine/bayes_opt_mdk2")
+
 from library.Metrics.metrics import fss
 
 from src.service.MDK2SimExtentService import MDK2SimExtentService
@@ -280,8 +283,8 @@ class MetricsServiceImpl:
 
 
         # for time_index in output_timesteps:
-        # print(':::::::::: TIME_INDEX :: ' + str(time_index))
-        # print(xp_identifier)
+        print(':::::::::: TIME_INDEX :: ' + str(time_index))
+        print(xp_identifier)
 
 
         """
@@ -580,6 +583,6 @@ class MetricsServiceImpl:
         
         # Get the maximum FSS value
         FSS = fss_df['fss'].max()
-        # print(FSS)
+        print(FSS)
     
         return FSS
