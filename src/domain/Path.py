@@ -9,7 +9,7 @@ class Path:
     
     def __init__(self, ROOT:str, MEDSLIK_FOLDER:str, WORKFLOW_CONFIG:str, CONFIG2_TEMPLATE:str, 
                  MEDSLIK_RUN:str, MEDSLIK_MODEL_SRC:str, CONFIG1:str, CONFIG2:str, CASES:str, 
-                 OBS:str, DAYS_GROUP:str, OUT_FOLDER:str, MEDSLIK_OUT_DIR:str):
+                 OBS:str, DAYS_GROUP:str, OUT_FOLDER:str, MEDSLIK_OUT_DIR:str, GSHHS_DATA:str):
         """ Initialize class with specified parameters """
         
         self._ROOT = ROOT
@@ -27,6 +27,7 @@ class Path:
         self._DAYS_GROUP = DAYS_GROUP
         self._OUT_FOLDER = OUT_FOLDER
         self._MEDSLIK_OUT_DIR = MEDSLIK_OUT_DIR
+        self._GSHHS_DATA = GSHHS_DATA
         
     """ Getter and setter methods to return or set values related to the class """
     
@@ -133,3 +134,11 @@ class Path:
     @get_MEDSLIK_OUT_DIR.setter
     def set_MEDSLIK_OUT_DIR(self, value):
         self._MEDSLIK_OUT_DIR = value
+        
+    @property
+    def get_GSHHS_DATA(self):
+        return self._GSHHS_DATA
+    
+    @get_GSHHS_DATA.setter
+    def set_GSHHS_DATA(self, value):
+        self._GSHHS_DATA = value
