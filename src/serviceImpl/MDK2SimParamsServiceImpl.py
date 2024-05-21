@@ -21,6 +21,9 @@ class MDK2SimParamsServiceImpl:
     def get_config_keys_impl(self):
         return self.mdk2_sim_params_dto_instance.get_k()
     
+    def get_config_values_impl(self):
+        return self.mdk2_sim_params_dto_instance.get_v()
+    
     def get_particles_value_impl(self):
         return self.mdk2_sim_params_dto_instance.get_vparticles()
     

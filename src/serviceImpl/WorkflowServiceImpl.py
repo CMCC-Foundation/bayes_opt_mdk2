@@ -46,7 +46,7 @@ class WorkflowServiceImpl:
         self.path_controller_instance = PathController()
         self.obj_function_controller_instance = ObjFunctionController()
         
-        # self.gen_mdk2_sim_instance = Gen_Mdk2_Sim()
+        # self.gen_mdk2_sim_instance = Gen_Mdk2_Sim()
         
     def get_execution_type_name_impl(self, value):
         for et in ExecutionType:
@@ -190,10 +190,15 @@ class WorkflowServiceImpl:
             self.path_controller_instance.remove_old_detection_directories(self.path_controller_instance.get_sim_result_dir(), "detection_")
             
         elif (self.execution_type == ExecutionType.MEDSLIK.value):
+
+            v_list = self.mdk2_sim_params_service_instance.get_config_values()
             
             """
             Runs the MEDSLIK-II model
             """
             self.execution_service_instance.run_model()
-            FSS = self.metrics_service_instance.compute_multi_fss_service()
-            # print(FSS)
+            if self.bay_opt_setup_service_instance.get_eval_metric() == "FSS":
+                metric = self.metrics_service_instance.compute_multi_fss_service(v_list)
+            elif self.bay_opt_setup_service_instance.get_eval_metric() == "overlay":
+                metric = self.metrics_service_instance.compute_multi_overlay_service(v_list)
+            print(metric)

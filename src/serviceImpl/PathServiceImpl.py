@@ -60,6 +60,9 @@ class PathServiceImpl:
     def get_MEDSLIK_OUT_DIR_impl(self):        
         return self.path_dto_instance.get_MEDSLIK_OUT_DIR()
     
+    def get_GSHHS_DATA_impl(self):
+        return self.path_dto_instance.get_GSHHS_DATA()
+    
     def copy_detection_directories_with_content_impl(self, source_path, destination_path, prefix):
         # Ensure that the destination directory exists
         os.makedirs(destination_path, exist_ok=True)

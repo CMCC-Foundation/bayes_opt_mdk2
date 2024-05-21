@@ -17,6 +17,9 @@ class BayOptSetupServiceImpl:
     """
     Get useful parameters using the appropriate instances
     """
+    def get_eval_metric_impl(self):
+        return self.bay_opt_setup_dto_instance.get_eval_metric()
+
     def get_init_points_impl(self):
         return self.bay_opt_setup_dto_instance.get_init_points()
     

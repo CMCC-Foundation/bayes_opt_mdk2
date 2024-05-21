@@ -86,7 +86,7 @@ class ExecutionServiceImpl:
     def run_model(self):
         try:
             # subprocess.run([f'cd {self.path_controller_instance.get_MEDSLIK_RUN()}; sh RUN.sh'],shell=True,check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            subprocess.run([f'cd {self.path_controller_instance.get_MEDSLIK_RUN()}; python /work/asc/machine_learning/projects/iMagine/Medslik-II/Medslik_run_usecase.py'], shell=True,check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subprocess.run([f'cd {self.path_controller_instance.get_MEDSLIK_RUN()}; sh RUN.sh'],shell=True,check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             return "Execution successfully completed"
         except subprocess.CalledProcessError as e:
             print(f"Error while running MEDSLIK-II: {e}")
@@ -98,7 +98,7 @@ class ExecutionServiceImpl:
     def save_best_detection_impl(self, value):
         max_fss = pd.read_csv(self.path_controller_instance.get_simulation_result_file(
             self.path_controller_instance.get_sim_result_dir()), 
-                              sep=',')['FSS'].max()
+                              sep=',')['Metric'].max()
         
         if value > max_fss or pd.isna(max_fss):
             self.path_controller_instance.copy_detection_directories_with_content(
