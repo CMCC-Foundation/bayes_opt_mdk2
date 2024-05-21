@@ -13,10 +13,10 @@ class PathDTO:
     
     def __init__(self):
         """ Initialize the useful instances using the values obtained from the configuration file """
-
+                
         self.ROOT = os.environ.get('PYTHONPATH').split(":")[1]
-        # self.ROOT = '/work/asc/machine_learning/projects/iMagine/bayes_opt_20240214'
-        self.MEDSLIK_FOLDER= "/work/asc/machine_learning/projects/iMagine/Medslik-II"
+        self.MEDSLIK_FOLDER = os.environ.get('SIMPATH').split(":")[1]
+        # self.MEDSLIK_FOLDER=os.path.join("/work/cmcc/machine_learning/md31923/iMagine/simulation/Medslik_II")
         # self.MEDSLIK_RUN = "/work/asc/machine_learning/projects/iMagine/MEDSLIK_II_2.02/RUN"
         self.MEDSLIK_RUN=os.path.join(self.MEDSLIK_FOLDER, 'MEDSLIK_II_3.01/RUN')
         self.WORKFLOW_CONFIG = os.path.join(self.ROOT, 'simulation_setup_file/workflow_config.toml')
@@ -36,7 +36,8 @@ class PathDTO:
             DAYS_GROUP = '/2021082*',
             OUT_FOLDER = self.OUT_FOLDER,
             # MEDSLIK_OUT_DIR = "/work/asc/machine_learning/projects/iMagine/MEDSLIK_II_2.02/OUT"
-            MEDSLIK_OUT_DIR = os.path.join(self.MEDSLIK_FOLDER, 'MEDSLIK_II_3.01/OUT')
+            MEDSLIK_OUT_DIR = os.path.join(self.MEDSLIK_FOLDER, 'MEDSLIK_II_3.01/OUT'),
+            GSHHS_DATA = os.path.join(self.MEDSLIK_FOLDER, 'data/gshhs/h/GSHHS_h_L1.shp')
         )
         
     """
@@ -120,4 +121,10 @@ class PathDTO:
         try:
             return self.path_instance.get_MEDSLIK_OUT_DIR
         except(TypeError, KeyError):
-            return None        
+            return None
+        
+    def get_GSHHS_DATA(self):
+        try:
+            return self.path_instance.get_GSHHS_DATA
+        except(TypeError, KeyError):
+            return None
