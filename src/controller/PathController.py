@@ -7,8 +7,7 @@
 
 import os
 import time
-import sys
-sys.path.append("/work/asc/machine_learning/projects/iMagine/bayes_opt_mdk2")
+
 from src.service.PathService import PathService
 from src.service.MDK2SimDateService import MDK2SimDateService
 from src.service.MDK2SimExtentService import MDK2SimExtentService
@@ -46,8 +45,8 @@ class PathController:
         # Create a new path for the final result file using a timestamp
         new_path = os.path.join(result_dir, f'final_result_{timestamp}.csv')
         
-        # Define the values to write to the final result file (including 'FSS')
-        values_to_write = self.mdk2_sim_params_service_instance.get_config_keys()[::-1] + ['FSS']
+        # Define the values to write to the final result file (including 'metric')
+        values_to_write = self.mdk2_sim_params_service_instance.get_config_keys()[::-1] + ['Metric']
         
         # Create the header string by joining the values with commas
         header = ','.join(map(str, values_to_write))
@@ -74,6 +73,9 @@ class PathController:
         with open(new_path, mode='a', newline='') as f:
             f.write("\n")
             f.write(header)
+
+    def get_final_result_file(self, result_dir):
+        return os.path.join(result_dir, f'final_result_{timestamp}.csv')
 
     def get_sim_str(self):
         """
@@ -216,7 +218,8 @@ class PathController:
         minutes = self.mdk2_sim_date_service_instance.get_minutes()
         
         # Construct the path to the observation file using obtained parameters
-        return os.path.join(self.path_service_instance.get_OBS_path(), f"{sim_name}", f"observations_20{year}_{month}_{day}_{hour}{minutes}")
+        # return os.path.join(self.path_service_instance.get_OBS_path(), f"{sim_name}", f"observations_20{year}_{month}_{day}_{hour}{minutes}")
+        return os.path.join(self.path_service_instance.get_OBS_path(), f"{sim_name}", f"observations_2021_08_23_1000")
     
     def get_DAYS_GROUP(self):
         return self.path_service_instance.get_DAYS_GROUP_path()
@@ -242,3 +245,6 @@ class PathController:
 
         # Construct the path to the MEDSLIK output directory using obtained parameters
         return os.path.join(self.path_service_instance.get_MEDSLIK_OUT_DIR_path(), f"MDK_SIM_20{year}_{month}_{day}_{hour}{minutes}_{sim_name}")
+    
+    def get_GSHHS_DATA(self):
+        return self.path_service_instance.get_GSHHS_DATA_path()

@@ -60,21 +60,24 @@ class ObjFunctionController:
         """
         Compute and returns the value of the FSS (Fraction Skill Score) metric
         """
-        FSS = self.metrics_service_instance.compute_multi_fss_service()
+        if self.bay_opt_setup_service_instance.get_eval_metric() == "FSS":
+            metric = self.metrics_service_instance.compute_multi_fss_service(kwargs.values())
+        elif self.bay_opt_setup_service_instance.get_eval_metric() == "overlay":
+            metric = self.metrics_service_instance.compute_multi_overlay_service(kwargs.values())
 
         """
         Saves the best detection obtained using the execution service
         """
-        self.execution_service_instance.save_best_detection(FSS)
+        self.execution_service_instance.save_best_detection(metric)
         
         """
-        Prepares the values to be written into the final file, including the values passed as arguments (kwargs) and the FSS value
+        Prepares the values to be written into the final file, including the values passed as arguments (kwargs) and the metric value
         """
-        values_to_write = list(kwargs.values()) + [str(FSS)]
+        values_to_write = list(kwargs.values()) + [str(metric)]
         
         """
         Writes the prepared values into the final file, using the path controller to determine the simulation result directory
         """
         self.path_controller_instance.write_final_result_file(values_to_write, self.path_controller_instance.get_sim_result_dir())
     
-        return FSS
+        return metric
