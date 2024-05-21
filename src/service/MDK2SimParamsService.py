@@ -26,6 +26,14 @@ class MDK2SimParamsService:
             print(f"An error has occurred: {e}")
             return None          
         
+    def get_config_values(self):
+        try:
+            v = self.mdk2_sim_params_service_impl_instance.get_config_values_impl()
+            return v
+        except Exception as e:
+            print(f"An error has occurred: {e}")
+            return None        
+
     def get_particles_value(self):
         try:
             vparticles = self.mdk2_sim_params_service_impl_instance.get_particles_value_impl()

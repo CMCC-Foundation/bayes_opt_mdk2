@@ -122,6 +122,14 @@ class PathService:
             print(f"An error has occurred: {e}")
             return None       
         
+    def get_GSHHS_DATA_path(self):
+        try:
+            data = self.path_service_impl_instance.get_GSHHS_DATA_impl()
+            return data
+        except Exception as e:
+            print(f"An error has occurred: {e}")
+            return None
+        
     def copy_detection_directories_with_content_service(self, source_path, destination_path, prefix):
         try:
             return self.path_service_impl_instance.copy_detection_directories_with_content_impl(source_path, destination_path, prefix)

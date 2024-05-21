@@ -91,9 +91,16 @@ class MetricsService:
             print(f"An error occurred: {e}")
             return None
         
-    def compute_multi_fss_service(self):
+    def compute_multi_fss_service(self, values):
         try:
-            return self.metrics_service_impl_instance.compute_multi_fss_service_impl()
+            return self.metrics_service_impl_instance.compute_multi_fss_service_impl(values)
         except Exception as e:
             print(f"Compute Multi FSS, An error occurred: {e}")
+            return None
+        
+    def compute_multi_overlay_service(self, values):
+        try:
+            return self.metrics_service_impl_instance.compute_multi_overlay_service_impl(values)
+        except Exception as e:
+            print(f"Compute Multi overlay, An error occurred: {e}")
             return None

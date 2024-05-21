@@ -17,6 +17,13 @@ class BayOptSetupService:
     """
     Recalls the implementation method to obtain the attributes present in the class by handling the exceptions
     """
+    def get_eval_metric(self):
+        try:
+            return self.bay_opt_setup_service_impl_instance.get_eval_metric_impl()
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return None
+
     def get_init_points(self):
         try:
             return self.bay_opt_setup_service_impl_instance.get_init_points_impl()
