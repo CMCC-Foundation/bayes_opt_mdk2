@@ -26,7 +26,7 @@ In the `/simulation_setup_file/workflow_config.toml` file, besides specifying th
 b = [[0.0, 0.05], [0.0, 15.0], [0.0, 20.0]]
 
 [bayesian_optimization.setup]
-eval_metric = "FSS" # or "overlay"
+eval_metric = "<metric>"
 init_points = 3
 n_iter = 7
 random_state = "None"
@@ -70,6 +70,8 @@ time_res = "day"
 process_files = "True"
 ```
 
+Instead of `<metric>`, insert `FSS` to use Fraction Skill Score or `overlay` to use Overlay.
+
 ## Execution Modes
 The tool supports two different execution modes:
 
@@ -85,7 +87,7 @@ To run the tool, use the following bash script:
 ```bash
 #!/bin/bash
 
-# !conda run -p <path to your conda env>
+!conda run -p <path to your conda env>
 ROOT="/work/cmcc/machine_learning/md31923/iMagine/bayes_opt_mdk2"
 SIM="/work/cmcc/machine_learning/md31923/iMagine/simulation/Medslik_II"
 OBS="/work/cmcc/machine_learning/md31923/iMagine/bayes_opt_mdk2/use_case_observations/syria/observations_2021_08_23_1000/20210824-1533-SYR-PL-B-01-S1"
