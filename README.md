@@ -4,7 +4,7 @@ Bayesian Optimization Workflow for the Medslik-II Mathematical Model, used for s
 
 ## Description
 
-This tool allows you to initiate a workflow based on Bayesian optimization to perform Oil Spill Event simulations using the Medslik-II model. The goal is to optimize the model's initial parameters in an informed, physically consistent manner without requiring specific domain knowledge.
+This tool allows you to initiate a workflow based on Bayesian Optimization to perform Oil Spill Event simulations using the Medslik-II model. The goal is to optimize the model's initial parameters in an informed, physically consistent manner without requiring specific domain knowledge.
 
 ## Features
 
