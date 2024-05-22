@@ -74,10 +74,10 @@ process_files = "True"
 The tool supports two different execution modes:
 
 1. **Optimization with Bayes Opt (Mode 0)**
-  - This mode uses Bayesian optimization to optimize the model's initial parameters.
+- - This mode uses Bayesian optimization to optimize the model's initial parameters.
 
 2. **Simulation without Bayes Opt (Mode 1)**
-  - This mode performs a simulation using the provided initial parameters without applying Bayesian optimization.
+- - This mode performs a simulation using the provided initial parameters without applying Bayesian optimization.
 
 ## Example of Execution
 To run the tool, use the following bash script:
