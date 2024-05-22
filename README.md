@@ -13,7 +13,7 @@ The optimization process improves the Oil Spill simulation results by maximizing
 - **Fraction Skill Score (FSS)**
 - **Overlay**
 
-To use the tool, you need to configure the model by modifying the `config.toml` file according to the chosen event. If you wish to compare the simulation result with a past event, you need to provide the path of the observation to be compared, along with the paths for the workflow and the output folder.
+To use the tool, you need to configure the model by modifying the `[config.toml](https://github.com/CMCC-Foundation/bayes_opt_mdk2/blob/main/simulation_setup_file/workflow_config.toml#:~:text=simulation_setup_file-,workflow_config.toml,-src)` file according to the chosen event. If you wish to compare the simulation result with a past event, you need to provide the path of the observation to be compared, along with the paths for the workflow and the output folder.
 
 ## Configuration
 
