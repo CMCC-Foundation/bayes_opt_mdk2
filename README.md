@@ -83,6 +83,9 @@ The tool supports two different execution modes:
 To run the tool, use the following bash script:
 
 ```
+#!/bin/bash
+
+# !conda run -p <path to your conda env>
 ROOT="/work/cmcc/machine_learning/md31923/iMagine/bayes_opt_mdk2"
 SIM="/work/cmcc/machine_learning/md31923/iMagine/simulation/Medslik_II"
 OBS="/work/cmcc/machine_learning/md31923/iMagine/bayes_opt_mdk2/use_case_observations/syria/observations_2021_08_23_1000/20210824-1533-SYR-PL-B-01-S1"
