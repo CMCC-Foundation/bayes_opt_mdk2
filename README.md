@@ -13,11 +13,11 @@ The optimization process improves the Oil Spill simulation results by maximizing
 - **Fraction Skill Score (FSS)**
 - **Overlay**
 
-To use the tool, you need to configure the model by modifying the `simulation_setup_file/workflow_config.toml` file according to the chosen event. If you wish to compare the simulation result with a past event, you need to provide the path of the observation to be compared, along with the paths for the workflow and the output folder.
+To use the tool, you need to configure the model by modifying the `/simulation_setup_file/workflow_config.toml` file according to the chosen event. If you wish to compare the simulation result with a past event, you need to provide the path of the observation to be compared, along with the paths for the workflow and the output folder.
 
 ## Configuration
 
-In the `simulation_setup_file/workflow_config.toml` file, besides specifying the characteristics of the simulation, it is important to define the number of "probe" and "exploration" iterations you wish to perform.
+In the `/simulation_setup_file/workflow_config.toml` file, besides specifying the characteristics of the simulation, it is important to define the number of "probe" and "exploration" iterations you wish to perform.
 
 ### Example configuration for `simulation_setup_file/workflow_config.toml`
 
@@ -26,7 +26,7 @@ In the `simulation_setup_file/workflow_config.toml` file, besides specifying the
 b = [[0.0, 0.05], [0.0, 15.0], [0.0, 20.0]]
 
 [bayesian_optimization.setup]
-eval_metric = "overlay" # or "FSS"
+eval_metric = "FSS" # or "overlay"
 init_points = 3
 n_iter = 7
 random_state = "None"
@@ -74,10 +74,10 @@ process_files = "True"
 The tool supports two different execution modes:
 
 1. **Optimization with Bayes Opt (Mode 0)**
-- This mode uses Bayesian optimization to optimize the model's initial parameters.
+  - This mode uses Bayesian optimization to optimize the model's initial parameters.
 
 2. **Simulation without Bayes Opt (Mode 1)**
-- This mode performs a simulation using the provided initial parameters without applying Bayesian optimization.
+  - This mode performs a simulation using the provided initial parameters without applying Bayesian optimization.
 
 ## Example of Execution
 To run the tool, use the following bash script:
