@@ -2,7 +2,7 @@
 b = [[0.0, 0.05], [0.0, 15.0], [0.0, 20.0]]
 
 [bayesian_optimization.setup]
-eval_metric = "FSS"
+eval_metric = "overlay"
 init_points = 30
 n_iter = 70
 random_state = "None"

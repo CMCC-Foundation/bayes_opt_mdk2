@@ -912,47 +912,18 @@ class MetricsServiceImpl:
                 in the list corresponds to a processed overlay based on the input values.
         """
 
-        # Get a list of observation folders
-        list_of_obs = glob.glob(self.path_controller_instance.get_OBS() + self.path_controller_instance.get_DAYS_GROUP())
-		
-        # Get simulation length and date
-        sim_lenght = self.mdk2_sim_extent_instance.get_sim_lenght()
-
         yy = self.mdk2_sim_date_instance.get_year()
         mm = self.mdk2_sim_date_instance.get_month()
         dd = self.mdk2_sim_date_instance.get_day()
         hh = self.mdk2_sim_date_instance.get_hour()
-
-        sim_date = self.get_sim_date_service_impl(yy, mm, dd, hh)
+        mn = self.mdk2_sim_date_instance.get_minutes()
 
         model_path = os.path.join(self.path_controller_instance.get_MEDSLIK_OUT_DIR(), "spill_properties.nc")
 
-        overlay_value_list = []
-
-        obs = 0
-        for slick_folder in list_of_obs:
-            
-            # Extract slick ID from the folder path
-            null, slick_id = os.path.split(slick_folder)
-            
-            slick_date = self.get_slick_date_service_impl(slick_id)
-
-            # Check if the difference between slick date and simulation date is within simulation length
-            if (slick_date-sim_date) < float(sim_lenght)/24:
-
-                # Create a detection directory for each observation
-                self.path_controller_instance.create_detection_dir(str(obs))
+        # Create a detection directory for each observation
+        self.path_controller_instance.create_detection_dir(f"20{yy}{mm}{dd}_{hh}{mn}")
                 
-                # Compute overlay for the current observation
-                overlay = self.metric_overlay_service_impl(self.path_controller_instance.get_GSHHS_DATA(), slick_folder, model_path, self.path_controller_instance.get_detection_dir(str(obs)), values)
+        # Compute overlay for the current observation
+        overlay = self.metric_overlay_service_impl(self.path_controller_instance.get_GSHHS_DATA(), os.environ.get('OBSPATH').split(":")[1], model_path, self.path_controller_instance.get_detection_dir(f"20{yy}{mm}{dd}_{hh}{mn}"), values)
 
-                overlay_value_list.append(overlay)
-
-                obs += 1
-        
-        # Get the maximum overlay value
-        # final_overlay = max(overlay_value_list)
-        final_overlay = overlay_value_list[-1]
-        # print(final_overlay)
-    
-        return final_overlay
+        return overlay
