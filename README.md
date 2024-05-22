@@ -82,7 +82,7 @@ The tool supports two different execution modes:
 ## Example of Execution
 To run the tool, use the following bash script:
 
-```
+```bash
 #!/bin/bash
 
 # !conda run -p <path to your conda env>
