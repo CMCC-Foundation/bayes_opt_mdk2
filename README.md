@@ -1,4 +1,4 @@
-# Bayesian Optimization Workflow per Medslik-II (bayes_opt_mdk2)
+# Bayesian Optimization Workflow for Medslik-II (bayes_opt_mdk2)
 
 Bayesian Optimization Workflow for the Medslik-II Mathematical Model, used for simulations of Oil Spill Events.
 
