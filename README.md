@@ -103,6 +103,6 @@ python $ROOT/src/main/main.py \
 Replace `<mode>` with `0` for Bayesian optimization or `1` for simple simulation.
 
 # Istruzioni per l'Uso
-1. **Configure the Model**: Modify the `config.toml` file with the parameters of the event to be simulated.
+1. **Configure the Model**: Modify the `/simulation_setup_file/workflow_config.toml` file with the parameters of the event to be simulated.
 2. **Provide Necessary Paths**: If you want to compare with a past event, make sure to provide the path to the observation.
 3. **Start the Optimization or Simulation Process**: Run the appropriate command to start the desired workflow.
