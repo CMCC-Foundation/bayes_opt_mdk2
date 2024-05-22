@@ -918,6 +918,8 @@ class MetricsServiceImpl:
         hh = self.mdk2_sim_date_instance.get_hour()
         mn = self.mdk2_sim_date_instance.get_minutes()
 
+        # sim_date = self.get_sim_date_service_impl(yy, mm, dd, hh)
+
         model_path = os.path.join(self.path_controller_instance.get_MEDSLIK_OUT_DIR(), "spill_properties.nc")
 
         # Create a detection directory for each observation
