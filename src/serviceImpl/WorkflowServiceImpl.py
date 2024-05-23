@@ -191,7 +191,7 @@ class WorkflowServiceImpl:
             
         elif (self.execution_type == ExecutionType.MEDSLIK.value):
 
-            v_list = self.mdk2_sim_params_service_instance.get_config_values()
+            v_list = self.mdk2_sim_params_service_instance.get_config_values()[::-1]
             
             """
             Runs the MEDSLIK-II model

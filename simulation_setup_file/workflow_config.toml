@@ -2,7 +2,7 @@
 b = [[0.0, 0.05], [0.0, 15.0], [0.0, 20.0]]
 
 [bayesian_optimization.setup]
-eval_metric = "overlay"
+eval_metric = "FSS"
 init_points = 3
 n_iter = 7
 random_state = "None"
@@ -36,7 +36,7 @@ delta = 1
 
 [medslik2.sim_params]
 k = [ "Wind correction (Drift Factor)", "Horizontal Diffusivity"]
-v = [ 0.01, 10.26]
+v = [ 0.00, 2.00]
 kparticles = "No of parcels used to model diffusion and dispersion"
 vparticles = 90000
 
