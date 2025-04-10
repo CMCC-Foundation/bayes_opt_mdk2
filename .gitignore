@@ -1,5 +1,35 @@
-# Ignore compiled Python files
-*.pyc
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Cython debug symbols
+cython_debug/
+
+# Virtual environments
+.env/
+.venv/
+env/
+venv/
+
+# Jupyter notebooks e dati temporanei
+*.ipynb_checkpoints
 notebooks/
+
+# Output, log e file temporanei
+*.log
+*.out
+*.err
+*.tmp
+
+# Mac OS
+.DS_Store
+
+# Config personali
+*.toml
+*.yaml
+
+# Cartelle custom del tuo progetto
 use_case_observations/
 use_cases/
+datasets/

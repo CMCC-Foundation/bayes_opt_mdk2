@@ -3,15 +3,15 @@ b = [[0.0, 0.05], [0.0, 15.0], [0.0, 20.0]]
 
 [bayesian_optimization.setup]
 eval_metric = "FSS"
-init_points = 3
-n_iter = 7
+init_points = 30
+n_iter = 70
 random_state = "None"
 decimal_precision = 2
 verbose = 2
 
 [medslik2.sim_extent]
 SIM_NAME = "syria"
-sim_length = "0008"
+sim_length = "0014"
 duration = "0000"
 spillrate = "00027.78"
 age = "0"
@@ -24,19 +24,19 @@ number_slick = 151
 day = "24"
 month = "08"
 year = "21"
-hour = "08"
-minutes = "10"
+hour = "03"
+minutes = "43"
 
 [medslik2.sim_coords]
 lat_degree = 35
-lat_minutes = 15.6
+lat_minutes = 10.356
 lon_degree = 35
-lon_minutes = 54.6
+lon_minutes = 55.002
 delta = 1
 
 [medslik2.sim_params]
 k = [ "Wind correction (Drift Factor)", "Horizontal Diffusivity"]
-v = [ 0.00, 2.00]
+v = [ 0.01, 10.26 ]
 kparticles = "No of parcels used to model diffusion and dispersion"
 vparticles = 90000
 
