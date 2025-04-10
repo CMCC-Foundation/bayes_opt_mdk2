@@ -172,24 +172,35 @@ class MetricsServiceImpl:
             float: The observation date represented as a float (ordinal date with fractional hour).
         """
         # Read the observation shapefile into a GeoDataFrame
-        observation_df = gpd.read_file(observation_shp)
+        # observation_df = gpd.read_file(observation_shp)
 
         # Extract the observation date string from the 'IDENTIFIER' column of the GeoDataFrame
-        observation_date_string = observation_df.IDENTIFIER[0]
+        # observation_date_string = observation_df.IDENTIFIER[0]
+
+        # print("newOBS:", os.environ.get('OBSPATH').split("/")[-1])
+
+        observation = os.environ.get('OBSPATH').split("/")[-1]
+
+        # print("string:", observation_date_string)
 
         # Extract year, month, day, hour, and minute from the observation date string
-        year=int(observation_date_string[0:4])
-        month=int(observation_date_string[4:6])
-        day=int(observation_date_string[6:8])
-        hour=int(observation_date_string[9:11])
-        minute=int(observation_date_string[11:13])
-        
+        # year=int(observation_date_string[0:4])
+        # month=int(observation_date_string[4:6])
+        # day=int(observation_date_string[6:8])
+        # hour=int(observation_date_string[9:11])
+        # minute=int(observation_date_string[11:13])
+        year=int(observation[0:4])
+        month=int(observation[4:6])
+        day=int(observation[6:8])
+        hour=int(observation[9:11])
+        minute=int(observation[11:13])
+
         # Convert the extracted components into a Python date object
         obs_date = date(year,month,day).toordinal()
 
         # Add the fractional part representing the hour
         obs_date = obs_date + hour/24.
-        
+
         return obs_date
 
     def get_mdksim_date_service_impl(self):
@@ -389,7 +400,7 @@ class MetricsServiceImpl:
             event_set[counter,2]=ii.coords[0][1]   
             counter=counter+1 
         # and save grid polygon
-        # output_frame.to_file('grid.shp')    
+        # output_frame.to_file(output_folder + 'grid.shp')    
         
         # Group your parcels into visualization grid
         gridded_parcels = gpd.sjoin(parcels_gdf,output_frame, how='left', op='within').set_crs('EPSG:4326',allow_override=True)
@@ -401,6 +412,7 @@ class MetricsServiceImpl:
         # Place them into "cell" array with their associated coordinates   
         output_frame.loc[cell_total_volume.index, 'cell_total_volume'] = cell_total_volume.cell_total_volume.values    
         modelled_spill = output_frame[output_frame['cell_total_volume'] > 0]
+        modelled_spill.to_file(output_folder + 'out.shp')
         
         for ii in range(0,len(modelled_spill)):
             counter = modelled_spill.iloc[ii].name
@@ -411,7 +423,7 @@ class MetricsServiceImpl:
         for ii in range(0,len(gridded_observation)):
             counter = gridded_observation.iloc[ii].name
             event_set[counter,4]=1      
-        # gridded_observation.to_file('observation.shp')
+        # gridded_observation.to_file(output_folder + 'observation.shp')
             
         # Find areas where model and observations coincide on oil detection
         model_and_obs= gpd.sjoin(left_df=output_frame[output_frame['cell_total_volume'] > 0], right_df=observation_gdf[['geometry']], how='inner')
@@ -495,7 +507,7 @@ class MetricsServiceImpl:
         reversed_config_keys = config_keys[::-1]
 
         description = ""
-        for item1, item2 in zip(reversed_config_keys, values):
+        for item1, item2 in zip(config_keys, values):
             description += f"{item1} : {np.round(float(item2), 2)}\n"
 
         description += "\n"
@@ -504,7 +516,7 @@ class MetricsServiceImpl:
         
         ax.text(0.5, -0.10, description, transform=ax.transAxes, fontsize=7, ha='center', va='top', bbox=dict(facecolor='white', edgecolor='none'))
 
-        title = f"MDK-II BayesOpt Simulation in {self.mdk2_sim_extent_instance.get_SIM_NAME()} \n after {'%02d' % (time_index)}h from last detection"
+        title = f"MDK-II Simulation in {self.mdk2_sim_extent_instance.get_SIM_NAME()} \n after {'%02d' % (time_index + 1)}h from last detection"
 
         # Add title
         plt.title(title, fontweight='bold', fontname='sans-serif', fontsize=10, color='black', pad=15)
@@ -647,7 +659,7 @@ class MetricsServiceImpl:
         description += f"Simulation init date: {self.mdk2_sim_date_instance.get_day()} {calendar.month_name[int(self.mdk2_sim_date_instance.get_month())]} 20{self.mdk2_sim_date_instance.get_year()} \nSimulation init hour: {self.mdk2_sim_date_instance.get_hour()}:{self.mdk2_sim_date_instance.get_minutes()} \nNumber of simulated particles: {self.mdk2_sim_params_instance.get_particles_value()} \n{self.bay_opt_setup_instance.get_eval_metric()}: {np.round(metric, 2)}"
         ax.text(0.5, -0.10, description, transform=ax.transAxes, fontsize=7, ha='center', va='top', bbox=dict(facecolor='white', edgecolor='none'))
 
-        title = f"MDK-II BayesOpt Simulation in {self.mdk2_sim_extent_instance.get_SIM_NAME()} \n after {'%02d' % (time_index+1)}h from the init position"
+        title = f"MDK-II Simulation in {self.mdk2_sim_extent_instance.get_SIM_NAME()} \n after {'%02d' % (time_index+1)}h from the init position"
 
         # Add title
         plt.title(title, fontweight='bold', fontname='sans-serif', fontsize=10, color='black', pad=15)
@@ -750,12 +762,14 @@ class MetricsServiceImpl:
         
         # RETAIN ONLY THE OIL ON WATER SURFACE, REMOVING LAND OVERLAY
         model_polygon = model_polygon.overlay(coastline, how='difference')
+
+        model_polygon.to_file(output_folder + 'model_polygon.shp')
         
         # Create the intersection between model and observed oil slick
-        overlay_shp = model_polygon.overlay(observation,how='intersection')
+        # overlay_shp = model_polygon.overlay(observation,how='intersection')
         
         # Calculates the metric (percentage)
-        overlay_value = (overlay_shp.area / observation.area)
+        # overlay_value = (overlay_shp.area / observation.area)
 
         fname = os.path.join(self.path_controller_instance.get_MEDSLIK_OUT_DIR(), "spill_properties.nc")
 
@@ -860,7 +874,8 @@ class MetricsServiceImpl:
         # Place them into "cell" array with their associated coordinates   
         output_frame.loc[cell_total_volume.index, 'cell_total_volume'] = cell_total_volume.cell_total_volume.values    
         modelled_spill = output_frame[output_frame['cell_total_volume'] > 0]
-        
+        modelled_spill.to_file(output_folder + 'out.shp')
+
         for ii in range(0,len(modelled_spill)):
             counter = modelled_spill.iloc[ii].name
             event_set[counter,3]=modelled_spill.iloc[ii].cell_total_volume/modelled_spill.iloc[ii].cell_total_volume
@@ -870,7 +885,7 @@ class MetricsServiceImpl:
         for ii in range(0,len(gridded_observation)):
             counter = gridded_observation.iloc[ii].name
             event_set[counter,4]=1      
-        # gridded_observation.to_file('observation.shp')
+        # gridded_observation.to_file(output_folder + 'observation.shp')
             
         # Find areas where model and observations coincide on oil detection
         model_and_obs= gpd.sjoin(left_df=output_frame[output_frame['cell_total_volume'] > 0], right_df=observation_gdf[['geometry']], how='inner')
@@ -893,6 +908,14 @@ class MetricsServiceImpl:
         array_union = array_model+2*array_observation
         array_union[array_union==0]=np.nan
 
+        # Create the intersection between model and observed oil slick
+        overlay_shp = modelled_spill.overlay(observation, how='intersection')
+        print("overlay_shp:", overlay_shp[0])
+
+        # Calculates the metric (percentage)
+        overlay_value = (overlay_shp.area / observation.area)
+        print("overlay_value:", overlay_value)
+
         self.plt_result(lonmin, latmin, lonmax, latmax, X, Y, array_union, xp_identifier, output_folder, time_index, overlay_value[0], values)
         
         return np.round(overlay_value[0], 2)
@@ -912,6 +935,12 @@ class MetricsServiceImpl:
                 in the list corresponds to a processed overlay based on the input values.
         """
 
+        # Get a list of observation folders
+        # list_of_obs = glob.glob(self.path_controller_instance.get_OBS() + self.path_controller_instance.get_DAYS_GROUP())
+		
+        # Get simulation length and date
+        # sim_lenght = self.mdk2_sim_extent_instance.get_sim_lenght()
+
         yy = self.mdk2_sim_date_instance.get_year()
         mm = self.mdk2_sim_date_instance.get_month()
         dd = self.mdk2_sim_date_instance.get_day()
@@ -922,10 +951,271 @@ class MetricsServiceImpl:
 
         model_path = os.path.join(self.path_controller_instance.get_MEDSLIK_OUT_DIR(), "spill_properties.nc")
 
+        # overlay_value_list = []
+
+        # obs = 0
+        # for slick_folder in list_of_obs:
+            
+            # Extract slick ID from the folder path
+            # null, slick_id = os.path.split(slick_folder)
+            
+            # slick_date = self.get_slick_date_service_impl(slick_id)
+
+            # Check if the difference between slick date and simulation date is within simulation length
+            # if (slick_date-sim_date) < float(sim_lenght)/24:
+
         # Create a detection directory for each observation
         self.path_controller_instance.create_detection_dir(f"20{yy}{mm}{dd}_{hh}{mn}")
                 
         # Compute overlay for the current observation
         overlay = self.metric_overlay_service_impl(self.path_controller_instance.get_GSHHS_DATA(), os.environ.get('OBSPATH').split(":")[1], model_path, self.path_controller_instance.get_detection_dir(f"20{yy}{mm}{dd}_{hh}{mn}"), values)
 
+        # overlay_value_list.append(overlay)
+
+        # obs += 1
+        
+        # Get the maximum overlay value
+        # final_overlay = max(overlay_value_list)
+        # final_overlay = overlay_value_list[-1]
+        # print(final_overlay)
+    
+        # return final_overlay
         return overlay
+
+    def compute_centroid_service_impl(self, shapefile_path, per_feature=False):
+
+        """
+        Calcola il centroide di uno shapefile.
+
+        Args:
+            shapefile_path (str): Percorso al file shapefile (.shp).
+            per_feature (bool): Se True, calcola i centroidi per ogni geometria del file. 
+                                Se False, calcola il centroide complessivo.
+
+        Returns:
+            GeoSeries o Point: Il centroide come GeoSeries (per_feature=True) o Point (per_feature=False).
+        """
+        # Carica lo shapefile
+        try:
+            shp = gpd.read_file(shapefile_path)
+        except Exception as e:
+            raise FileNotFoundError(f"Errore nel caricamento dello shapefile: {e}")
+
+        # Controlla che ci siano geometrie valide
+        if shp.empty or 'geometry' not in shp.columns:
+            raise ValueError("Lo shapefile non contiene geometrie valide.")
+
+        # Calcola il centroide
+        if per_feature:
+            # Restituisce un GeoSeries con i centroidi per ogni feature
+            centroidi = shp.geometry.centroid
+            return centroidi
+        else:
+            # Calcola il centroide complessivo unendo tutte le geometrie
+            centroide_complessivo = shp.unary_union.centroid
+            print(centroide_complessivo)
+            return centroide_complessivo
+        
+    def compute_centroid_distance_service_impl(self, simulation_folder, observation_shp, output_folder, values):
+
+        """
+        Plotta due shapefile con i rispettivi centroidi, una linea che rappresenta la distanza tra di essi
+        e l'area di overlap tra i due shapefile.
+
+        Args:
+            shapefile1_path (str): Percorso al primo file shapefile (.shp).
+            shapefile2_path (str): Percorso al secondo file shapefile (.shp).
+        """
+
+         # Set the spatial resolution for the verification grid (in km)
+        verif_grid_resolution = .15
+
+        # Set mapping projection
+        crs = "+proj=merc +lon_0=0 +x_0=0 +y_0=0 +a=6371007.181 +b=6371007.181 +units=m +no_defs"
+
+        # Calculate grid resolution in degrees
+        grid_resolution = np.longdouble(verif_grid_resolution)/110.
+
+        # Construct the file path to the spill properties NetCDF file
+        fname = simulation_folder + '/spill_properties.nc'
+
+        # Obtain simulation date and observation date
+        # simulation_date = self.get_mdksim_date_service_impl()
+        # observation_date = self.get_obs_date_service_impl(observation_shp)
+
+        # Find the time index of the simulation data closest to the observation date
+        time_index = self.get_time_index(self.get_mdksim_date_service_impl(), self.get_obs_date_service_impl(observation_shp))
+
+        # Construct an identifier for the current simulation output based on simulation name and time index
+        # xp_identifier = self.mdk2_sim_extent_instance.get_SIM_NAME() + '_' + '%02d' % (time_index+1) + 'h_' 
+        xp_identifier = self.path_controller_instance.get_sim_str() + '_' + '%02d' % (time_index+1) + 'h_' 
+
+
+        # for time_index in output_timesteps:
+        # print(':::::::::: TIME_INDEX :: ' + str(time_index))
+        # print(xp_identifier)
+
+
+        """
+        Filter out beached, dispersed, sunk and unreleased parcels
+        lons_f = longitude coordinates of each oil parcel
+        lats_f = latitude coordinates of each oil parcel    
+        surface_volumes = total volumes (evaporative and non evaporative) for each parcel found on the surface
+        """
+        lons_f,lats_f,surface_volumes = self.get_surface_parcels_service_impl(fname,time_index)
+
+        # Create dataframe with the location and volume of surface parcels
+        df_gpan = pd.DataFrame({"lat":lats_f,
+                    "lon":lons_f,
+                    "vol":surface_volumes})
+                    
+        # Create geodataframe from pandas dataframe              
+        # parcels_gdf = gpd.GeoDataFrame(df_gpan, 
+        #             geometry=gpd.points_from_xy(df_gpan.lon, df_gpan.lat),
+        #             crs=crs) 
+        parcels_gdf = gpd.GeoDataFrame(df_gpan, 
+                    geometry=gpd.points_from_xy(df_gpan.lon, df_gpan.lat),crs=crs).set_crs('EPSG:4326',allow_override=True)
+        parcels_gdf = parcels_gdf.drop(columns=['lon', 'lat']) # remove useless variables
+                    
+        # load satellite detection shapefile
+        observation_df = gpd.read_file(observation_shp)
+        # observation_gdf = gpd.GeoDataFrame(observation_df[['geometry']],crs=crs)
+
+        observation_gdf = gpd.GeoDataFrame(observation_df[['geometry']]).set_crs('EPSG:4326',allow_override=True)
+
+        
+        """
+        Generate comparison grid
+        comparison grid is a common grid covering observed and modelled spills
+        the grid resolution has been set, for now, at 150m S
+        """
+        # first, getting observation bounds
+        obs_bounds = observation_gdf.bounds
+
+        lonmin=np.min(lons_f)
+        latmin=np.min(lats_f)
+        lonmax=np.max(lons_f)
+        latmax=np.max(lats_f)
+        
+        if obs_bounds.minx[0] < lonmin:
+            lonmin=obs_bounds.minx[0]
+        if obs_bounds.maxx[0] > lonmax:
+            lonmax=obs_bounds.maxx[0]
+        if obs_bounds.miny[0] < latmin:
+            latmin=obs_bounds.miny[0]
+        if obs_bounds.maxy[0] > latmax:
+            latmax=obs_bounds.maxy[0]
+        
+        # create grid polygon consisting of multiple polygons describing squared grid cells    
+        output_frame = self.make_poly_grid_service_impl(lonmin,lonmax,latmin,latmax,grid_resolution,crs)
+
+        # (AUGUSTO SEPP ----- MODIFIED)
+        output_frame.set_crs('EPSG:4326',allow_override=True)
+
+        """
+        Create numpy-compatible grid 
+        by first getting the central coordinates of each grid cell
+        """
+        #grid_centroid = np.asarray(output_frame['geometry'].centroid) 
+        grid_centroid = output_frame['geometry'].to_crs(crs).centroid.to_crs(output_frame.crs)
+
+        """
+        Then running through grid points (indices) and creating an output matrix "event_set"
+        containing:
+        column 0: cell index
+        column 1: longitude coordinate of grid cell centroid
+        column 2: latitude coordinate of grid cell centroid  
+        column 3: simulated oil presence/absence
+        column 4: observed oil presence/absence
+        column 5: intersection between simulated and observed oil
+        """
+        counter=0
+        event_set=np.zeros((len(grid_centroid),6))*np.nan
+        
+        for ii in grid_centroid:
+            event_set[counter,0]=counter
+            event_set[counter,1]=ii.coords[0][0]
+            event_set[counter,2]=ii.coords[0][1]   
+            counter=counter+1 
+        # and save grid polygon
+        # output_frame.to_file(output_folder + 'grid.shp')    
+        
+        # Group your parcels into visualization grid
+        gridded_parcels = gpd.sjoin(parcels_gdf,output_frame, how='left', op='within').set_crs('EPSG:4326',allow_override=True)
+
+        # Aggregate volumes to grid cells with dissolve 
+        gridded_parcels['cell_total_volume']=1
+        cell_total_volume = gridded_parcels.dissolve(by="index_right", aggfunc="count")   
+
+        # Place them into "cell" array with their associated coordinates   
+        output_frame.loc[cell_total_volume.index, 'cell_total_volume'] = cell_total_volume.cell_total_volume.values    
+        modelled_spill = output_frame[output_frame['cell_total_volume'] > 0]
+        modelled_spill.to_file(output_folder + 'out.shp')
+        
+        for ii in range(0,len(modelled_spill)):
+            counter = modelled_spill.iloc[ii].name
+            event_set[counter,3]=modelled_spill.iloc[ii].cell_total_volume/modelled_spill.iloc[ii].cell_total_volume
+
+        # Fit satellite observation (spill shape) into visualization grid
+        gridded_observation = gpd.sjoin(left_df=output_frame, right_df=observation_gdf[['geometry']], how='inner').set_crs('EPSG:4326',allow_override=True)
+        for ii in range(0,len(gridded_observation)):
+            counter = gridded_observation.iloc[ii].name
+            event_set[counter,4]=1      
+        # gridded_observation.to_file(output_folder + 'observation.shp')
+            
+        # Find areas where model and observations coincide on oil detection
+        model_and_obs= gpd.sjoin(left_df=output_frame[output_frame['cell_total_volume'] > 0], right_df=observation_gdf[['geometry']], how='inner')
+        for ii in range(0,len(model_and_obs)):
+            counter = model_and_obs.iloc[ii].name
+            event_set[counter,5]=1
+
+        X,Y=np.meshgrid(np.unique(event_set[:,1]),np.unique(event_set[:,2]))
+        interp_model=NearestNDInterpolator(list(zip(event_set[:,1],event_set[:,2])),event_set[:,3])
+        interp_observation=NearestNDInterpolator(list(zip(event_set[:,1],event_set[:,2])),event_set[:,4])
+        # interp_intersection=NearestNDInterpolator(list(zip(event_set[:,1],event_set[:,2])),event_set[:,5])
+        
+        array_model = interp_model(X, Y)
+        array_observation = interp_observation(X, Y)   
+        # array_intersection = interp_intersection(X, Y)    
+        
+        array_model[np.isnan(array_model)] = 0
+        array_observation[np.isnan(array_observation)] = 0
+
+        array_union = array_model+2*array_observation
+        array_union[array_union==0]=np.nan
+        
+        # Set search window sizes  (in number of pixes)
+        horizontal_scales = range(1,150,2) # horizontal_scales = range(1,11,2) per aumentare la scala
+        fss_output=np.zeros((len(horizontal_scales),2))
+        
+        cc = 0
+        for hh in horizontal_scales:         
+            fss_= fss(array_model, array_observation, 1, hh)
+            fss_output[cc,0]=hh
+            fss_output[cc,1]=fss_
+            cc=cc+1
+        
+        # Calcola i centroidi complessivi per entrambi gli shapefile
+        centroide1 = self.compute_centroid_service_impl(observation_shp, per_feature=False)
+        centroide2 = self.compute_centroid_service_impl(output_folder + 'out.shp', per_feature=False)
+        
+        # Calcola la distanza tra i due centroidi
+        distanza = centroide1.distance(centroide2)
+
+        self.plt_result(lonmin, latmin, lonmax, latmax, X, Y, array_union, xp_identifier, output_folder, time_index, distanza, values)
+
+        return distanza
+
+    def compute_multi_centroid_distance_service_impl(self, values):
+
+        yy = self.mdk2_sim_date_instance.get_year()
+        mm = self.mdk2_sim_date_instance.get_month()
+        dd = self.mdk2_sim_date_instance.get_day()
+        hh = self.mdk2_sim_date_instance.get_hour()
+        mn = self.mdk2_sim_date_instance.get_minutes()
+
+        self.path_controller_instance.create_detection_dir(f"20{yy}{mm}{dd}_{hh}{mn}")
+
+        distance = self.compute_centroid_distance_service_impl(self.path_controller_instance.get_MEDSLIK_OUT_DIR(), os.environ.get('OBSPATH').split(":")[1], self.path_controller_instance.get_detection_dir(f"20{yy}{mm}{dd}_{hh}{mn}"), values)
+    
+        return -(np.round(distance, 4))

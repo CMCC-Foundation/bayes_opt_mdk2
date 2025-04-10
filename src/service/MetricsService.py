@@ -104,3 +104,10 @@ class MetricsService:
         except Exception as e:
             print(f"Compute Multi overlay, An error occurred: {e}")
             return None
+        
+    def compute_multi_centroid_distance_service(self, values):
+        try:
+            return self.metrics_service_impl_instance.compute_multi_centroid_distance_service_impl(values)
+        except Exception as e:
+            print(f"Compute Multi centroid distance, An error occurred: {e}")
+            return None

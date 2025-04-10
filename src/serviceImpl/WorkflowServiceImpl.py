@@ -191,7 +191,7 @@ class WorkflowServiceImpl:
             
         elif (self.execution_type == ExecutionType.MEDSLIK.value):
 
-            v_list = self.mdk2_sim_params_service_instance.get_config_values()[::-1]
+            v_list = self.mdk2_sim_params_service_instance.get_config_values()
             
             """
             Runs the MEDSLIK-II model
@@ -201,4 +201,6 @@ class WorkflowServiceImpl:
                 metric = self.metrics_service_instance.compute_multi_fss_service(v_list)
             elif self.bay_opt_setup_service_instance.get_eval_metric() == "overlay":
                 metric = self.metrics_service_instance.compute_multi_overlay_service(v_list)
+            elif self.bay_opt_setup_service_instance.get_eval_metric() == "centroid":
+                metric = self.metrics_service_instance.compute_multi_centroid_distance_service(v_list)
             print(metric)
