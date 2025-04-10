@@ -1,0 +1,4 @@
+# Ignore compiled Python files
+*.pyc
+use_case_observations/
+use_cases/
