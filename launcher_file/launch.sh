@@ -3,8 +3,8 @@
 #BSUB -q s_short
 #BSUB -P R000
 #BSUB -J iMagine
-#BSUB -o ./job.out
-#BSUB -e ./job.err
+#BSUB -o ./job_20210824-0810-SYR-PL-A-01-S3.out
+#BSUB -e ./job_20210824-0810-SYR-PL-A-01-S3.err
 #BSUB -R "rusage[mem=3G]"
 
 ROOT="/work/cmcc/machine_learning/md31923/iMagine/bayes_opt_mdk2"
@@ -20,4 +20,4 @@ export SIMPATH=$SIMPATH:$SIM && \
 export OBSPATH=$OBSPATH:$OBS && \
 
 python $ROOT/src/main/main.py \
---mode 0
+--mode 1

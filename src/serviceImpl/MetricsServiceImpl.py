@@ -2,7 +2,7 @@
 # Bayesian Optimization Workflow for Medslik-II Simulations
 # Copyright (c) 2023-2024 CMCC Foundation
 # Licensed under The MIT License [see LICENSE for details]
-# Written by Augusto Sepp Nieves, Marco Mariano De Carlo, Gabriele Accarino, Igor Atake
+# Written by Augusto Sepp Neves, Marco Mariano De Carlo, Gabriele Accarino, Igor Atake
 # -------------------------------------------------------------------------------------
 
 from shapely.geometry import Polygon
@@ -22,6 +22,7 @@ import xarray as xr
 from shapely.geometry import Point
 import re
 import calendar
+import time
 
 from library.Metrics.metrics import fss
 
@@ -288,7 +289,7 @@ class MetricsServiceImpl:
             observation_shp (str): The file path to the shapefile containing observation data.
             output_folder (str): The folder where the FSS results will be saved.
         """
-
+       
         # Set the spatial resolution for the verification grid (in km)
         verif_grid_resolution = .15
 
@@ -354,6 +355,7 @@ class MetricsServiceImpl:
         # first, getting observation bounds
         obs_bounds = observation_gdf.bounds
 
+        '''
         lonmin=np.min(lons_f)
         latmin=np.min(lats_f)
         lonmax=np.max(lons_f)
@@ -367,19 +369,28 @@ class MetricsServiceImpl:
             latmin=obs_bounds.miny[0]
         if obs_bounds.maxy[0] > latmax:
             latmax=obs_bounds.maxy[0]
-        
+        '''
+        lonmin = min(np.min(lons_f), obs_bounds.minx.min())
+        lonmax = max(np.max(lons_f), obs_bounds.maxx.max())
+        latmin = min(np.min(lats_f), obs_bounds.miny.min())
+        latmax = max(np.max(lats_f), obs_bounds.maxy.max())
+
         # create grid polygon consisting of multiple polygons describing squared grid cells    
-        output_frame = self.make_poly_grid_service_impl(lonmin,lonmax,latmin,latmax,grid_resolution,crs)
+        # output_frame = self.make_poly_grid_service_impl(lonmin,lonmax,latmin,latmax,grid_resolution,crs)
 
         # (AUGUSTO SEPP ----- MODIFIED)
-        output_frame.set_crs('EPSG:4326',allow_override=True)
+        # output_frame.set_crs('EPSG:4326',allow_override=True)
+        # [2] Costruzione griglia
+        output_frame = self.make_poly_grid_service_impl(lonmin, lonmax, latmin, latmax, grid_resolution, crs)
+        output_frame.set_crs('EPSG:4326', allow_override=True)
 
         """
         Create numpy-compatible grid 
         by first getting the central coordinates of each grid cell
         """
         #grid_centroid = np.asarray(output_frame['geometry'].centroid) 
-        grid_centroid = output_frame['geometry'].to_crs(crs).centroid.to_crs(output_frame.crs)
+        # grid_centroid = output_frame['geometry'].to_crs(crs).centroid.to_crs(output_frame.crs)
+        grid_centroid = output_frame.geometry.centroid
 
         """
         Then running through grid points (indices) and creating an output matrix "event_set"
@@ -391,6 +402,7 @@ class MetricsServiceImpl:
         column 4: observed oil presence/absence
         column 5: intersection between simulated and observed oil
         """
+        '''
         counter=0
         event_set=np.zeros((len(grid_centroid),6))*np.nan
         
@@ -412,8 +424,61 @@ class MetricsServiceImpl:
         # Place them into "cell" array with their associated coordinates   
         output_frame.loc[cell_total_volume.index, 'cell_total_volume'] = cell_total_volume.cell_total_volume.values    
         modelled_spill = output_frame[output_frame['cell_total_volume'] > 0]
+        '''
+        # [3] Centroidi
+        grid_centroid = output_frame.geometry.centroid
+        coords = np.array([pt.coords[0] for pt in grid_centroid])
+        event_set = np.full((len(coords), 6), np.nan)
+        event_set[:, 0] = np.arange(len(coords))
+        event_set[:, 1:3] = coords
+
+        # [4] Join + conteggio
+        gridded_parcels = gpd.sjoin(parcels_gdf, output_frame, how='left', op='within')
+        cell_counts = gridded_parcels.groupby('index_right').size()
+        output_frame['cell_total_volume'] = 0
+        output_frame.loc[cell_counts.index, 'cell_total_volume'] = cell_counts.values
+
+        # [5] Estrazione
+        modelled_spill = output_frame[output_frame['cell_total_volume'] > 0]
         modelled_spill.to_file(output_folder + 'out.shp')
         
+        # [1] Aggiorna 'event_set' con i volumi della cella normalizzati
+        modelled_spill['normalized_volume'] = modelled_spill['cell_total_volume'] / modelled_spill['cell_total_volume']
+        event_set[modelled_spill.index, 3] = modelled_spill['normalized_volume'].values
+
+        # [2] Fit satellite observation (spill shape) into visualization grid
+        gridded_observation = gpd.sjoin(output_frame, observation_gdf[['geometry']], how='inner').set_crs('EPSG:4326', allow_override=True)
+        event_set[gridded_observation.index, 4] = 1  # Update event set for matching observation cells
+
+        # [3] Trova le aree di sovrapposizione tra modello e osservazione
+        model_and_obs = gpd.sjoin(output_frame[output_frame['cell_total_volume'] > 0], observation_gdf[['geometry']], how='inner')
+        event_set[model_and_obs.index, 5] = 1  # Update event set for model-observation coincidence
+
+        # [4] Interpolazione su un grid mesh
+        X, Y = np.meshgrid(np.unique(event_set[:, 1]), np.unique(event_set[:, 2]))
+        interp_model = NearestNDInterpolator(list(zip(event_set[:, 1], event_set[:, 2])), event_set[:, 3])
+        interp_observation = NearestNDInterpolator(list(zip(event_set[:, 1], event_set[:, 2])), event_set[:, 4])
+
+        array_model = interp_model(X, Y)
+        array_observation = interp_observation(X, Y)
+
+        # [5] Gestisci i valori NaN
+        array_model[np.isnan(array_model)] = 0
+        array_observation[np.isnan(array_observation)] = 0
+
+        # [6] Calcola l'unione dei modelli e delle osservazioni
+        array_union = array_model + 2 * array_observation
+        array_union[array_union == 0] = np.nan
+
+        # [7] Calcola il Fractional Skill Score (FSS)
+        horizontal_scales = range(1, 150, 2)
+        fss_output = np.zeros((len(horizontal_scales), 2))
+        
+        for cc, hh in enumerate(horizontal_scales):
+            fss_ = fss(array_model, array_observation, 1, hh)
+            fss_output[cc, 0] = hh
+            fss_output[cc, 1] = fss_
+        '''
         for ii in range(0,len(modelled_spill)):
             counter = modelled_spill.iloc[ii].name
             event_set[counter,3]=modelled_spill.iloc[ii].cell_total_volume/modelled_spill.iloc[ii].cell_total_volume
@@ -459,6 +524,7 @@ class MetricsServiceImpl:
             fss_output[cc,0]=hh
             fss_output[cc,1]=fss_
             cc=cc+1
+        '''
 
         """
         Plotting and saving results
@@ -684,6 +750,8 @@ class MetricsServiceImpl:
             The FSS value.
         """
 
+        start_time = time.time()
+
         yy = self.mdk2_sim_date_instance.get_year()
         mm = self.mdk2_sim_date_instance.get_month()
         dd = self.mdk2_sim_date_instance.get_day()
@@ -693,7 +761,12 @@ class MetricsServiceImpl:
         self.path_controller_instance.create_detection_dir(f"20{yy}{mm}{dd}_{hh}{mn}")
 
         FSS = self.compute_sin_fss(self.path_controller_instance.get_MEDSLIK_OUT_DIR(), os.environ.get('OBSPATH').split(":")[1], self.path_controller_instance.get_detection_dir(f"20{yy}{mm}{dd}_{hh}{mn}"), values)
-    
+        
+        end_time = time.time()
+        execution_time = (end_time - start_time) / 60
+
+        print("exec_time:", {execution_time})
+
         return FSS
     
     def metric_overlay_service_impl(self,
