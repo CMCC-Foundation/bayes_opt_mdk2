@@ -20,4 +20,4 @@ export SIMPATH=$SIMPATH:$SIM && \
 export OBSPATH=$OBSPATH:$OBS && \
 
 python $ROOT/src/main/main.py \
---mode 0
+--mode 1
