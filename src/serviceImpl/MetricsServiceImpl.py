@@ -684,6 +684,8 @@ class MetricsServiceImpl:
             The FSS value.
         """
 
+        start_time = time.time()
+
         yy = self.mdk2_sim_date_instance.get_year()
         mm = self.mdk2_sim_date_instance.get_month()
         dd = self.mdk2_sim_date_instance.get_day()
@@ -694,6 +696,11 @@ class MetricsServiceImpl:
 
         FSS = self.compute_sin_fss(self.path_controller_instance.get_MEDSLIK_OUT_DIR(), os.environ.get('OBSPATH').split(":")[1], self.path_controller_instance.get_detection_dir(f"20{yy}{mm}{dd}_{hh}{mn}"), values)
     
+        end_time = time.time()
+        execution_time = (end_time - start_time) / 60
+
+        print("exec_time:", {execution_time})
+
         return FSS
     
     def metric_overlay_service_impl(self,
