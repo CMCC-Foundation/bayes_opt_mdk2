@@ -201,6 +201,6 @@ class WorkflowServiceImpl:
                 metric = self.metrics_service_instance.compute_multi_fss_service(v_list)
             elif self.bay_opt_setup_service_instance.get_eval_metric() == "overlay":
                 metric = self.metrics_service_instance.compute_multi_overlay_service(v_list)
-            elif self.bay_opt_setup_service_instance.get_eval_metric() == "centroid":
+            elif self.bay_opt_setup_service_instance.get_eval_metric() == "CSS":
                 metric = self.metrics_service_instance.compute_multi_centroid_distance_service(v_list)
             print(metric)

@@ -1,6 +1,6 @@
 # Bayesian Optimization Workflow for Medslik-II (bayes_opt_mdk2)
 
-Bayesian Optimization Workflow for the Medslik-II Mathematical Model, used for simulations of Oil Spill Events.
+Bayesian Optimization Workflow for the Medslik-II Numerical Model, used for simulations of Oil Spill Events.
 
 ## Description
 
@@ -12,6 +12,7 @@ The optimization process improves the Oil Spill simulation results by maximizing
 
 - **Fraction Skill Score (FSS)**
 - **Overlay**
+- **Centroid Skill Score (CSS)**
 
 To use the tool, you need to configure the model by modifying the `/simulation_setup_file/workflow_config.toml` file according to the chosen event. If you wish to compare the simulation result with a past event, you need to provide the path of the observation to be compared, along with the paths for the workflow and the output folder.
 
@@ -30,7 +31,7 @@ eval_metric = "<metric>"
 init_points = 3
 n_iter = 7
 random_state = "None"
-decimal_precision = 2
+decimal_precision = 6
 verbose = 2
 
 [medslik2.sim_extent]
@@ -59,8 +60,8 @@ lon_minutes = 54.6
 delta = 1
 
 [medslik2.sim_params]
-k = ["Wind correction (Drift Factor)", "Horizontal Diffusivity"]
-v = [0.01, 10.26]
+k = ["Wind correction (Drift Factor)", "Wind correction (Drift Angle at zero wind speed)", "Horizontal Diffusivity"]
+v = [0.0, 0.0, 2.0]
 kparticles = "No of parcels used to model diffusion and dispersion"
 vparticles = 90000
 
@@ -70,7 +71,7 @@ time_res = "day"
 process_files = "True"
 ```
 
-Instead of `<metric>`, insert `FSS` to use Fraction Skill Score or `overlay` to use Overlay.
+Instead of `<metric>`, insert `FSS` to use Fraction Skill Score, `overlay` to use Overlay or `CSS` to use Centroid Skill Score.
 
 ## Execution Modes
 The tool supports two different execution modes:
